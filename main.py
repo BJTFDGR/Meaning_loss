@@ -37,7 +37,7 @@ CONTEXT_LENGTHS_TO_TEST = [100, 200, 300, 500, 1000]
 NUM_SAMPLES_PER_LENGTH = 500
 # --- Preprocessing Parameters ---
 NUM_PREFILTERED_EXAMPLES = 2000 # Target number of examples containing the word
-MODEL_MAX_LENGTH = 512
+MODEL_MAX_LENGTH = 512 # Max length for encoder length
 PREFILTERED_DATA_DIR = "./prefiltered_data" # Directory to save/load filtered data
 FORCE_REFILTER = True # Set to True to re-run filtering even if file exists
 # --- Create directory for filtered data ---
