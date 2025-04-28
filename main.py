@@ -1,9 +1,9 @@
 import os
-PATH = '/home/chenboc1/localscratch2/chenboc1/Meaning_loss/cache'
-os.environ['TRANSFORMERS_CACHE'] = PATH
-os.environ['HF_HOME'] = PATH
-os.environ['HF_DATASETS_CACHE'] = PATH
-os.environ['TORCH_HOME'] = PATH
+# PATH = '/home/chenboc1/localscratch2/chenboc1/Meaning_loss/cache'
+# os.environ['TRANSFORMERS_CACHE'] = PATH
+# os.environ['HF_HOME'] = PATH
+# os.environ['HF_DATASETS_CACHE'] = PATH
+# os.environ['TORCH_HOME'] = PATH
 # --- Imports ---
 import torch
 import re
@@ -22,10 +22,11 @@ import random
 
 # --- Configuration ---
 # --- Choose your model ---
+MODEL_MAX_LENGTH = 512 # Max length for encoder length
 MODEL_NAME = "bert-base-uncased"
 # Examples:
 # MODEL_NAME = "openai-community/gpt2-large"
-# MODEL_NAME = "meta-llama/Meta-Llama-3-8B"
+MODEL_NAME = "meta-llama/Llama-3.2-1B"
 
 # --- Choose your dataset ---
 DATASET_NAME = "openwebtext"
@@ -33,11 +34,10 @@ DATASET_SPLIT = "train"
 
 # --- Experiment Parameters ---
 TARGET_WORD = "sure"
-CONTEXT_LENGTHS_TO_TEST = [100, 200, 300, 500, 1000]
+CONTEXT_LENGTHS_TO_TEST = [100, 200, 300, 500, 1000, 2000]
 NUM_SAMPLES_PER_LENGTH = 500
 # --- Preprocessing Parameters ---
 NUM_PREFILTERED_EXAMPLES = 2000 # Target number of examples containing the word
-MODEL_MAX_LENGTH = 512 # Max length for encoder length
 PREFILTERED_DATA_DIR = "./prefiltered_data" # Directory to save/load filtered data
 FORCE_REFILTER = True # Set to True to re-run filtering even if file exists
 # --- Create directory for filtered data ---
@@ -136,8 +136,11 @@ if "llama" in MODEL_NAME.lower():
 try:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     if tokenizer.pad_token is None: tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModel.from_pretrained(MODEL_NAME)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu"); model.to(device)
+    model = AutoModel.from_pretrained(
+        MODEL_NAME, use_auth_token=True,            # tells Hugging Face to send your HF_HUB_TOKEN
+    )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
     print(f"Model loaded successfully on device: {device}")
     MODEL_MAX_LENGTH = tokenizer.model_max_length
     if MODEL_MAX_LENGTH is None or MODEL_MAX_LENGTH > 100000: 
