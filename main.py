@@ -28,6 +28,9 @@ MODEL_NAME = "bert-base-uncased"
 # MODEL_NAME = "openai-community/gpt2-large"
 MODEL_NAME = "meta-llama/Llama-3.2-1B"
 
+# late chunking method
+MODEL_NAME = "jinaai/jina-embeddings-v2-base-en"
+
 # --- Choose your dataset ---
 DATASET_NAME = "openwebtext"
 DATASET_SPLIT = "train"
@@ -165,9 +168,17 @@ def get_word_embedding_in_context(text, target_word, tokenizer, model, device):
     """Gets the embedding for a target word within a given text context."""
     # Note: Ensure text length respects model's max length if not using a long-context model
     # You might need to truncate or implement a sliding window here depending on strategy.
+
+    # ---- Path A: unified encode(...) API? ----
+    if hasattr(model, "encode"):
+        # returns an (N × dim) numpy array
+        full_emb = model.encode([text])
+        return full_emb[0]
+
     encoded_input = tokenizer(text, return_tensors='pt', truncation=True, max_length=MODEL_MAX_LENGTH)
     input_ids = encoded_input['input_ids'].to(device)
     attention_mask = encoded_input['attention_mask'].to(device)
+    
     target_token_ids = tokenizer.encode(' ' + target_word, add_special_tokens=False)
     token_indices = []
     input_ids_list = input_ids[0].tolist()
