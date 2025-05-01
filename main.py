@@ -22,7 +22,7 @@ import random
 
 # --- Configuration ---
 # --- Choose your model ---
-MODEL_MAX_LENGTH = 512 # Max length for encoder length
+MODEL_MAX_LENGTH = 5000 # Max length for encoder length
 MODEL_NAME = "bert-base-uncased"
 # Examples:
 # MODEL_NAME = "openai-community/gpt2-large"
@@ -37,7 +37,7 @@ DATASET_SPLIT = "train"
 
 # --- Experiment Parameters ---
 TARGET_WORD = "sure"
-CONTEXT_LENGTHS_TO_TEST = [100, 200, 300, 500, 1000, 2000]
+CONTEXT_LENGTHS_TO_TEST = [100, 200, 300, 500, 1000, 2000,3000, 4000]
 NUM_SAMPLES_PER_LENGTH = 500
 # --- Preprocessing Parameters ---
 NUM_PREFILTERED_EXAMPLES = 2000 # Target number of examples containing the word
@@ -145,7 +145,7 @@ try:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     print(f"Model loaded successfully on device: {device}")
-    MODEL_MAX_LENGTH = tokenizer.model_max_length
+    # MODEL_MAX_LENGTH = tokenizer.model_max_length
     if MODEL_MAX_LENGTH is None or MODEL_MAX_LENGTH > 100000: 
         MODEL_MAX_LENGTH = 2048; print(f"Warning: Model max length not found, falling back to {MODEL_MAX_LENGTH}.")
     print(f"Model max sequence length: {MODEL_MAX_LENGTH}")
